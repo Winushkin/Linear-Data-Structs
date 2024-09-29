@@ -1,6 +1,3 @@
-//
-// Created by Кирилл Беляев on 24.09.2024.
-//
 #include "iostream"
 #ifndef AADT_LAB1_LINKEDLIST_H
 #define AADT_LAB1_LINKEDLIST_H
@@ -122,6 +119,16 @@ void LinkedList<T>::swap(int index1, int index2) {
     swap(el2->tail, el1->tail);
 }
 
+template<typename T>
+void LinkedList<T>::print() {
+    Node<T> *cur = this->head;
+    std::cout << cur->data;
+    cur = cur->next;
+    while ( cur ){
+        std::cout << ", " << cur->data;
+        cur = cur->next;
+    }
+}
 
 
 
