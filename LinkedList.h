@@ -3,21 +3,21 @@
 #define AADT_LAB1_LINKEDLIST_H
 
 template <typename T>
-class Node {
+class listNode {
 public:
     T data;
-    Node* prev, *next;
-    explicit Node(T inputData);
+    listNode* prev, *next;
+    explicit listNode(T inputData);
 };
 
 template<typename T>
-Node<T>::Node(T inputData):data(inputData) {}
+listNode<T>::listNode(T inputData):data(inputData) {}
 
 
 template <typename T>
 class LinkedList {
     int length;
-    Node<T> *head = nullptr, *tail = nullptr;
+    listNode<T> *head = nullptr, *tail = nullptr;
 
 public:
     LinkedList(int length = 0);
@@ -27,9 +27,22 @@ public:
     void append(T value);
     void pop(int index);
     int getIndex(T value);
+    listNode<T> *getAt(int index);
     void swap(int index1, int index2);
 
 };
+
+template<typename T>
+listNode<T> *LinkedList<T>::getAt(int index) {
+    listNode<T> *cur = head;
+    if ( index < 0 || index >= length ){
+        return nullptr;
+    }
+    for ( int i = 0; i < index; i++ ){
+        cur = cur->next;
+    }
+    return cur;
+}
 
 
 template <typename T>
@@ -38,11 +51,25 @@ LinkedList<T>::LinkedList(int length): length(length) {}
 
 template<typename T>
 void LinkedList<T>::insert(int index, T value) {
-    Node<T> *cur = this->head;
-    for ( int i = 0; i < index; i++ ){
-        cur = cur->next;
-    }
+    listNode<T> *newNode = new listNode(value);
 
+    if ( index == 0 ){
+        newNode->next = head;
+        head->prev = newNode;
+        head = newNode;
+
+    }else if ( index == length ){
+        tail->next = newNode;
+        newNode->prev = tail;
+        tail = newNode;
+
+    }else {
+        listNode<T> *cur = getAt(index);
+        newNode->prev = cur->prev;
+        newNode->next = cur;
+        cur->prev->next = newNode;
+        cur->prev = newNode;
+    }
 }
 
 
@@ -54,14 +81,14 @@ int LinkedList<T>::len() {
 
 template<typename T>
 void LinkedList<T>::append(T value) {
-    this->tail->next = new Node<T>(value);
+    this->tail->next = new listNode<T>(value);
     this->tail = this->tail->next;
 }
 
 
 template<typename T>
 void LinkedList<T>::pop(int index){
-    Node<T> *cur = this->head;
+    listNode<T> *cur = this->head;
     for ( int i = 0; i < index; i++ ){
         cur = cur->next;
     }
@@ -73,7 +100,7 @@ void LinkedList<T>::pop(int index){
 
 template<typename T>
 int LinkedList<T>::getIndex(T value) {
-    Node<T> *cur = this->head;
+    listNode<T> *cur = this->head;
     int counter = -1;
     while ( cur ){
         counter++;
@@ -91,13 +118,13 @@ void LinkedList<T>::swap(int index1, int index2) {
         return;
     }
 
-    Node<T> *cur = this->head;
-    Node<T> *el1, *el2;
+    listNode<T> *cur = this->head;
+    listNode<T> *el1, *el2;
     for (int i = 0; i < std::max(index1, index2); i++) {
         if (i == std::min(index1, index2)) {
             el1 = cur;
         }
-        cur = cur->tail;
+        cur = cur->next;
     }
     el2 = cur;
 
@@ -108,20 +135,21 @@ void LinkedList<T>::swap(int index1, int index2) {
     if ( el2 == this->tail ){
         this->tail = el1;
     }
-    if ( el1->head ){
-        el1->head->tail = el2;
+    if ( el1->prev ){
+        el1->prev->next = el2;
     }
-    if ( el2->tail){
-        el2->tail->head = el1;
+    if ( el2->next){
+        el2->next->prev = el1;
     }
-    swap(el1->head, el2->head);
-    swap(el1->tail, el1->head);
-    swap(el2->tail, el1->tail);
+    std::swap(el1->prev, el2->prev);
+    std::swap(el1->next, el1->prev);
+    std::swap(el2->next, el1->next);
 }
+
 
 template<typename T>
 void LinkedList<T>::print() {
-    Node<T> *cur = this->head;
+    listNode<T> *cur = this->head;
     std::cout << cur->data;
     cur = cur->next;
     while ( cur ){
