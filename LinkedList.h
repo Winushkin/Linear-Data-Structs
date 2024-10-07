@@ -81,8 +81,16 @@ int LinkedList<T>::len() {
 
 template<typename T>
 void LinkedList<T>::append(T value) {
-    this->tail->next = new listNode<T>(value);
-    this->tail = this->tail->next;
+    listNode<T> *newNode = new listNode<T>(value);
+    if ( length == 0 ){
+        tail = newNode;
+        head = newNode;
+    }else{
+        this->tail->next = newNode;
+        newNode->prev = tail;
+        this->tail = this->tail->next;
+    }
+    length++;
 }
 
 
@@ -92,8 +100,17 @@ void LinkedList<T>::pop(int index){
     for ( int i = 0; i < index; i++ ){
         cur = cur->next;
     }
-    cur->prev->next = cur->next;
-    cur->next->prev = cur->prev;
+
+    if ( !cur->prev ){
+        cur->next->prev = nullptr;
+        head = cur->next;
+    } else if ( !cur->next ){
+        cur->prev->next = nullptr;
+        tail = cur->prev;
+    }else{
+        cur->prev->next = cur->next;
+        cur->next->prev = cur->prev;
+    }
     delete cur;
 }
 
@@ -107,6 +124,7 @@ int LinkedList<T>::getIndex(T value) {
         if ( cur->data == value ){
             break;
         }
+        cur = cur->next;
     }
     return counter;
 }
@@ -114,48 +132,60 @@ int LinkedList<T>::getIndex(T value) {
 
 template<typename T>
 void LinkedList<T>::swap(int index1, int index2) {
-    if (index1 == index2 || index1 < 0 || index1 > this->length - 1 || index2 < 0 || index2 > this->length - 1) {
-        return;
+    listNode<T>* ptr1 = getAt(index1);
+    listNode<T>* ptr2 = getAt(index2);
+    listNode<T>* left1 = getAt(index1-1);
+    listNode<T>* left2 = getAt(index2-1);
+    listNode<T>* right1 = getAt(index1+1);
+    listNode<T>* right2 = getAt(index2+1);
+
+    if (ptr1 == nullptr) return;
+    else if (ptr2 == nullptr) return;
+    else if (index1 == index2) return;
+
+    if (left1 != nullptr) {
+        left1->next = ptr2;
+    } else {
+        head = ptr2;
     }
 
-    listNode<T> *cur = this->head;
-    listNode<T> *el1, *el2;
-    for (int i = 0; i < std::max(index1, index2); i++) {
-        if (i == std::min(index1, index2)) {
-            el1 = cur;
-        }
-        cur = cur->next;
-    }
-    el2 = cur;
-
-    if ( el1 == this->head ){
-        this->head = el2;
+    if (left2 != nullptr) {
+        left2->next = ptr1;
+    } else {
+        head = ptr1;
     }
 
-    if ( el2 == this->tail ){
-        this->tail = el1;
+    if (right1 != nullptr) {
+        right1->prev = ptr2;
+    } else{
+        tail = ptr2;
     }
-    if ( el1->prev ){
-        el1->prev->next = el2;
+
+    if (right2 != nullptr) {
+        right2->prev = ptr1;
+    } else{
+        tail = ptr1;
     }
-    if ( el2->next){
-        el2->next->prev = el1;
-    }
-    std::swap(el1->prev, el2->prev);
-    std::swap(el1->next, el1->prev);
-    std::swap(el2->next, el1->next);
+
+    listNode<T>* temp = ptr1->next;
+    ptr1->next = ptr2->next;
+    ptr2->next = temp;
+    temp = ptr1->prev;
+    ptr1->prev = ptr2->prev;
+    ptr2->prev = temp;
 }
 
 
 template<typename T>
 void LinkedList<T>::print() {
     listNode<T> *cur = this->head;
-    std::cout << cur->data;
+    std::cout << "[" << cur->data;
     cur = cur->next;
     while ( cur ){
         std::cout << ", " << cur->data;
         cur = cur->next;
     }
+    std::cout << "]";
 }
 
 
