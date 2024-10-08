@@ -1,5 +1,6 @@
 #include "LinkedList.h"
 #include "Stack.h"
+#include "Array.h"
 
 #ifndef AADT_LAB1_APPLICATION_H
 #define AADT_LAB1_APPLICATION_H
@@ -12,6 +13,7 @@ public:
     int ListWork();
     int StackWork();
     int ArrayWork();
+    int sortStationWork();
     int exec();
 
 };
