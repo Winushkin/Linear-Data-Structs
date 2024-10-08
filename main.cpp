@@ -1,6 +1,10 @@
 #include <iostream>
+#include "application.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    Application app = Application();
+    app.exec();
+
+
     return 0;
 }
