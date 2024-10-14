@@ -1,6 +1,7 @@
 #include "LinkedList.h"
 #include "Stack.h"
 #include "Array.h"
+#include "SortStation.h"
 
 #ifndef AADT_LAB1_APPLICATION_H
 #define AADT_LAB1_APPLICATION_H

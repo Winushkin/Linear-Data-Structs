@@ -45,24 +45,12 @@ void Application::showMenu(char choice = 'a') {
                     "Another. Exit\n\n";
             break;
 
-        case 'd':
-            //Stack;
-            break;
-
-        case 'e':
-            //SortStaion
-            cout << "1. infix -> Prefix/Postfix\n"
-                    "2. check expressions for mistakes\n"
-                    "3. Evaluate expression\n";
-            break;
-
         default:
             cout << "invalid input";
             break;
     }
 
 }
-
 
 
 int Application::ListWork() {
@@ -108,7 +96,12 @@ int Application::ListWork() {
 
             case 4:
                 cout << "Enter element to remove: "; cin >> elem;
-                list->pop(list->getIndex(elem));
+                index = list->getIndex(elem);
+                if ( index < 0){
+                    cout << "invalid index";
+                }else{
+                    list->pop(list->getIndex(elem));
+                }
 
                 list->print();
                 cout << "\n";
@@ -145,22 +138,12 @@ int Application::ListWork() {
 }
 
 
-int Application::StackWork() {
-    return 0;
-}
-
-
 int Application::ArrayWork() {
     int choice, elem, fillingChoice, index, index2, *ptr;
     ifstream fin;
     Array<int> *array = nullptr;
     showMenu('c');
 
-//            "4. pop element\n"
-//            "5. swap elems\n"
-//            "6. get elem\n"
-//            "7. print array\n"
-//            "Another. Exit\n\n";
     while (true) {
         cout << "\nyour choice: "; cin >> choice;
         switch (choice) {
@@ -262,13 +245,45 @@ int Application::ArrayWork() {
                 return 0;
         }
     }
-
-    return 0;
 }
 
 
 int Application::sortStationWork() {
-    return 0;
+    SortStation station;
+    string input;
+    bool errorFlag = false;
+    int choice;
+
+    cout << "1. infix -> Prefix\n"
+            "Another. Exit\n";
+
+    while ( true ){
+        cout << " your choice: "; cin >> choice;
+        switch (choice) {
+
+            case 1:
+                cout << "Enter expression: ";
+                clearStream();
+                input = station.getStr();
+                input = station.toRPN(input , errorFlag);
+
+                if ( errorFlag || input.empty() ){
+                    cout << "Invalid input";
+                    break;
+                }
+//                cout << "Postfix expression: " << input;
+
+                if ( station.calculate(input) ){
+                    cout << "Postfix expression: " << input;
+                }else{
+                    cout << "invalid input";
+                }
+                break;
+
+            default:
+                return 0;
+        }
+    }
 }
 
 
@@ -289,21 +304,13 @@ int Application::exec(){
                 break;
 
             case 'd':
-                StackWork();
+                sortStationWork();
                 break;
 
-            case 'e':
+            default:
+                cout << "try aggain plz";
                 break;
-
-
         }
         return 0;
     }
-
-
-
-
-
-
-
 }

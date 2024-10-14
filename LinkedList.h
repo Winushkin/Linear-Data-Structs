@@ -34,12 +34,21 @@ public:
 
 template<typename T>
 listNode<T> *LinkedList<T>::getAt(int index) {
-    listNode<T> *cur = head;
+    listNode<T> *cur;
     if ( index < 0 || index >= length ){
         return nullptr;
     }
-    for ( int i = 0; i < index; i++ ){
-        cur = cur->next;
+
+    if ( index < length / 2 ){
+        cur = head;
+        for ( int i = 0; i < index; i++ ){
+            cur = cur->next;
+        }
+    }else{
+        cur = tail;
+        for ( int i = length - 1; i > index ; i-- ){
+            cur = cur->prev;
+        }
     }
     return cur;
 }
@@ -69,6 +78,7 @@ void LinkedList<T>::insert(int index, T value) {
         newNode->next = cur;
         cur->prev->next = newNode;
         cur->prev = newNode;
+
     }
 }
 
@@ -96,37 +106,49 @@ void LinkedList<T>::append(T value) {
 
 template<typename T>
 void LinkedList<T>::pop(int index){
-    listNode<T> *cur = this->head;
-    for ( int i = 0; i < index; i++ ){
-        cur = cur->next;
+
+    if ( index > 0 && index < length ){
+        listNode<T> *cur = this->head;
+        for ( int i = 0; i < index; i++ ){
+            cur = cur->next;
+        }
+
+        if ( !cur->prev ){
+            cur->next->prev = nullptr;
+            head = cur->next;
+        } else if ( !cur->next ){
+            cur->prev->next = nullptr;
+            tail = cur->prev;
+        }else{
+            cur->prev->next = cur->next;
+            cur->next->prev = cur->prev;
+        }
+        delete cur;
+    } else {
+        std::cout << "Invalid index";
     }
 
-    if ( !cur->prev ){
-        cur->next->prev = nullptr;
-        head = cur->next;
-    } else if ( !cur->next ){
-        cur->prev->next = nullptr;
-        tail = cur->prev;
-    }else{
-        cur->prev->next = cur->next;
-        cur->next->prev = cur->prev;
-    }
-    delete cur;
+
 }
 
 
 template<typename T>
 int LinkedList<T>::getIndex(T value) {
+    bool flag = false;
     listNode<T> *cur = this->head;
     int counter = -1;
     while ( cur ){
         counter++;
         if ( cur->data == value ){
+            flag = true;
             break;
         }
         cur = cur->next;
     }
-    return counter;
+    if ( flag ){
+        return counter;
+    }
+    return -1;
 }
 
 

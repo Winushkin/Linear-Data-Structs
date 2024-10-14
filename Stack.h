@@ -1,62 +1,74 @@
 #ifndef AADT_LAB1_STACK_H
 #define AADT_LAB1_STACK_H
 
+
 template <typename T>
-class Node {
+class stackNode {
 public:
     T data;
-    Node *head;
-    explicit Node(T inputData);
+    int priority;
+    stackNode *prev;
+    stackNode(T inputData, int priority);
 };
+
+
+template <typename T>
+stackNode<T>::stackNode(T inputData, int priority) {
+    data = inputData;
+    this->priority = priority;
+    prev = nullptr;
+}
 
 
 template <typename T>
 class Stack {
-    int length = 0;
-    Node<T> *tail = nullptr;
 public:
+    stackNode<T> *tail = nullptr, *head = nullptr;
+
     Stack();
-    void push(T value);
-    T pop();
-    bool isEmpty();
+    ~Stack();
+    void push(T value, int priority);
+    void pop();
     T peek();
 };
 
+template<typename T>
+Stack<T>::Stack(): head(nullptr), tail(nullptr) {}
+
 
 template<typename T>
-Stack<T>::Stack(): length(0) {}
-
-
-template<typename T>
-void Stack<T>::push(T value) {
-    auto *cur = new Node<T>;
-    cur->data = value;
-    cur->head = this->tail;
-    this->tail = cur;
-    length++;
+Stack<T>::~Stack() {
+    while(head != nullptr) pop();
 }
 
 
 template<typename T>
-T Stack<T>::pop() {
-    T val = this->tail->data;
-    Node<T> dlt = this->tail;
-    this->tail = this->tail->head;
-    delete dlt;
-    length--;
-    return val;
+void Stack<T>::push(T value, int priority) {
+    auto *node = new stackNode<T>(value, priority);
+    node->prev = head;
+    head = node;
+    if (tail == nullptr) tail = node;
 }
 
 
 template<typename T>
-bool Stack<T>::isEmpty() {
-    return !length;
+void Stack<T>::pop() {
+    if (head == nullptr) return;
+    if (head == tail){
+        delete tail;
+        head = tail = nullptr;
+        return;
+    }
+    stackNode<T> *node = head;
+    head = node->prev;
+    delete node;
 }
 
 
 template<typename T>
 T Stack<T>::peek() {
-    return this->tail->data;
+    return *head;
 }
+
 
 #endif //AADT_LAB1_STACK_H

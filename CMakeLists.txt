@@ -10,4 +10,5 @@ add_executable(AaDT_Lab1 main.cpp
         application.cpp
         Array.h
         SortStation.h
+        SortStation.cpp
 )
